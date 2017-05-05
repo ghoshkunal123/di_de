@@ -1,0 +1,10 @@
+select * from prodcopy.dbo.account_plan_instrument where instrument# % 10 = 0;
+select * from prodcopy.dbo.account_plan_instrument where instrument# % 10 = 1;
+select * from prodcopy.dbo.account_plan_instrument where instrument# % 10 = 2;
+select * from prodcopy.dbo.account_plan_instrument where instrument# % 10 = 3;
+select * from prodcopy.dbo.account_plan_instrument where instrument# % 10 = 4;
+select * from prodcopy.dbo.account_plan_instrument where instrument# % 10 = 5;
+select * from prodcopy.dbo.account_plan_instrument where instrument# % 10 = 6;
+select * from prodcopy.dbo.account_plan_instrument where instrument# % 10 = 7;
+select * from prodcopy.dbo.account_plan_instrument where instrument# % 10 = 8;
+select * from prodcopy.dbo.account_plan_instrument where instrument# % 10 = 9;
