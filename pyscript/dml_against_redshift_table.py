@@ -32,11 +32,7 @@ import datetime
 import logging
 import pyodbc
 import csv
-import multiprocessing
 import json
-import boto3
-import botocore
-import subprocess
 
 
 #********************************************
