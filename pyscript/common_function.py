@@ -16,6 +16,7 @@
 #         DATE      PGMR              DESCRIPTION
 #      ---------- -----------  ---------------------------------
 #      03/29/2017 Kunal Ghosh   Initial Code.
+#      07/31/2017 Kunal Ghosh   Added the send_email module.
 #
 ##########################################################################
 
@@ -27,6 +28,7 @@ import json
 import boto3
 import datetime
 from dateutil import tz
+import smtplib
 
 #********************************************
 # Send sns notifications from any job
@@ -38,7 +40,7 @@ from dateutil import tz
 def send_sns_email(subject,message):
 	client = boto3.client('sns',region_name='us-west-1')
 	response = client.publish(
-	TargetArn='arn:aws:sns:us-west-1:224919220385:finr-ml-ds-poc-email-sns',
+	TargetArn='arn:aws:sns:us-west-1:224919220385:FINR_Admin_Alerts',
 	Message=json.dumps(message),
 	Subject=subject,
 	MessageStructure='json')
@@ -60,3 +62,31 @@ def local_to_utc(dt,fmt):
 	local=local.replace(tzinfo=from_zone)
 	utc=local.astimezone(to_zone)
 	return utc
+
+
+#********************************************
+# Send email notifications from any job
+#********************************************
+#sender='Mystry'
+#receivers=['kghosh@financialengines.com']
+#subject='Hello'
+#body='Hi, \n My name is Kunal. \n Thanks and regards, \n Kunal Ghosh'
+
+def send_email(sender,receivers,subject,body):
+	message = """From: %s
+To: %s
+Subject: %s
+%s
+""" % (sender,', '.join(receivers),subject,body)
+
+	try:
+	#	smtpObj = smtplib.SMTP('localhost')
+		smtpObj = smtplib.SMTP('email.fefinr.io')
+		smtpObj.sendmail(sender, receivers, message)
+		print "Successfully sent email"
+	except smtplib.SMTPException:
+		print "Error: unable to send email"
+	#	sys.exit(1)
+	finally:
+		smtpObj.quit()
+#send_email(sender,receivers,subject,body)
