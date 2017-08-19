@@ -72,31 +72,31 @@ def run_each_sql(sql_line):
 #********************************************
 	pcurrent_date=datetime.datetime.strftime(datetime.datetime.now(),'%Y%m%d%H%M%S')
 	subpname=multiprocessing.current_process().name
-#	dblogfile=py_job_name + '_netezza_py_connect_' + subpname + '_' + pcurrent_date + '.log'
-#	print get_curr_date_time(), ': current_date :',current_date
-#	print get_curr_date_time(), ': subpname :',subpname
-#	print get_curr_date_time(), ': dblogfile :',dblogfile
-#	try:
-#		logging.basicConfig(filename=log_dir + dblogfile,level=logging.INFO)
-#	except:
-#		print get_curr_date_time(), ' Failed setting up logging.'
+	dblogfile=py_job_name + '_netezza_py_connect_' + subpname + '_' + pcurrent_date + '.log'
+	print get_curr_date_time(), ': current_date :',current_date
+	print get_curr_date_time(), ': subpname :',subpname
+	print get_curr_date_time(), ': dblogfile :',dblogfile
+	try:
+		logging.basicConfig(filename=log_dir + dblogfile,level=logging.INFO)
+	except:
+		print get_curr_date_time(), ' Failed setting up logging.'
 #********************************************
 # Send job failure email
 #********************************************
-#		email_subject = 'Error! ' + py_job_name
-#		msg={}
-#		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' trying to set up logging for netezza for job_name.' + job_name
-#		msg['default'] = email_body
-#		msg_json=json.loads(json.dumps(msg))
-#		print get_curr_date_time(), ': email_subject :',email_subject
-#		print get_curr_date_time(), ': email_body :',email_body
-#		print get_curr_date_time(), ': msg :',msg
-#		print get_curr_date_time(), ': msg_json :',msg_json
-#		try:
-#			send_email(email_subject,msg_json)
-#		except:
-#			print get_curr_date_time(), ' Failed sending the job failure email.'
-#		sys.exit(3)
+		email_subject = 'Error! ' + py_job_name
+		msg={}
+		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' trying to set up logging for netezza for job_name.' + job_name
+		msg['default'] = email_body
+		msg_json=json.loads(json.dumps(msg))
+		print get_curr_date_time(), ': email_subject :',email_subject
+		print get_curr_date_time(), ': email_body :',email_body
+		print get_curr_date_time(), ': msg :',msg
+		print get_curr_date_time(), ': msg_json :',msg_json
+		try:
+			send_email(email_subject,msg_json)
+		except:
+			print get_curr_date_time(), ' Failed sending the job failure email.'
+		sys.exit(3)
 #********************************************
 # Connecting to netezza
 #********************************************
@@ -111,7 +111,7 @@ def run_each_sql(sql_line):
 #********************************************
 		email_subject = 'Error! ' + py_job_name
 		msg={}
-		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' trying to connect to MSSQL for subjob ' + subpname + '.'
+		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' trying to connect to NETEZZA for subjob ' + subpname + '.'
 		msg['default'] = email_body
 		msg_json=json.loads(json.dumps(msg))
 		print get_curr_date_time(), ': email_subject :',email_subject

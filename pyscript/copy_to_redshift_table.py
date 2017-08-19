@@ -16,6 +16,8 @@
 #         DATE      PGMR              DESCRIPTION
 #      ---------- -----------  ---------------------------------
 #      05/09/2017 Kunal Ghosh   Initial Code.
+#      08/17/2017 Kunal Ghosh   Include mandatory option to accept acceptinvchars	
+#      08/18/2017 Kunal Ghosh   Ask option to accept acceptinvchars	
 #
 ##########################################################################
 
@@ -70,11 +72,11 @@ if __name__ == '__main__':
 		job_dir=os.path.dirname(sys.argv[0])
 	py_job_name=os.path.basename(sys.argv[0]).split('.')[0]
 
-	if len(sys.argv[1:]) == 0 or len(sys.argv[1:]) != 9:
-		print 'Usage Error: <py_job_name> <db_name> <schema_name> <table_name> <bucket_name> <bucket_prefix> <file_name> <delimiter> <file_format> <truncate_before y|n>'
-		print 'Example: ./copy_to_redshift_table.py prodcopy stage account_plan_instrument fe-finr-da Dev/bulk/mssql/prodcopy/account_plan_instrument/ na \'|\' csv y'
+	if len(sys.argv[1:]) == 0 or len(sys.argv[1:]) != 10:
+		print 'Usage Error: <py_job_name> <db_name> <schema_name> <table_name> <bucket_name> <bucket_prefix> <file_name> <delimiter> <file_format> <truncate_before y|n> <accept_inv_chars y|n>'
+		print 'Example: ./copy_to_redshift_table.py prodcopy stage account_plan_instrument fe-finr-da Dev/bulk/mssql/prodcopy/account_plan_instrument/ na \'|\' csv y y'
 		print 'OR'
-		print 'Example: ./copy_to_redshift_table.py prodcopy stage account_plan_instrument fe-finr-da Dev/bulk/mssql/prodcopy/account_plan_instrument/ account_plan_instrument.csv \'|\' csv y'
+		print 'Example: ./copy_to_redshift_table.py prodcopy stage account_plan_instrument fe-finr-da Dev/bulk/mssql/prodcopy/account_plan_instrument/ account_plan_instrument.csv \'|\' csv y y'
 		sys.exit(1)
 
 	db_name=sys.argv[1].lower()
@@ -86,6 +88,7 @@ if __name__ == '__main__':
 	delimiter=sys.argv[7]
 	file_format=sys.argv[8]
 	truncate_before=sys.argv[9].lower()
+	accept_inv_chars=sys.argv[10].lower()
 	py_job_name=py_job_name + '_' + db_name + '_' + schema_name + '_' + table_name
 	logfile=py_job_name + '_' +  current_date + '.log'
 	errorfile=py_job_name + '_' + current_date + '.err'
@@ -105,7 +108,10 @@ if __name__ == '__main__':
 	s3_full_path=os.path.join('s3://',bucket_name,bucket_prefix,file_name)
 	s3_list_cmd='aws s3 ls ' + s3_full_path
 	truncate_sql='truncate table ' + db_name + '.' + schema_name + '.' + table_name + ';'
-	copy_sql='copy ' + db_name + '.' + schema_name + '.' + table_name + ' from \'' + s3_full_path + '\' credentials \'' + redshift_copy_credentials + '\' delimiter \'' + delimiter + '\' ' + file_format + ';'
+	if ( accept_inv_chars == 'y' ):
+		copy_sql='copy ' + db_name + '.' + schema_name + '.' + table_name + ' from \'' + s3_full_path + '\' credentials \'' + redshift_copy_credentials + '\' delimiter \'' + delimiter + '\' ' + file_format + ' acceptinvchars;'
+	else:
+		copy_sql='copy ' + db_name + '.' + schema_name + '.' + table_name + ' from \'' + s3_full_path + '\' credentials \'' + redshift_copy_credentials + '\' delimiter \'' + delimiter + '\' ' + file_format + ';' 
 
 #********************************************
 # Start writing log and error
@@ -142,6 +148,7 @@ if __name__ == '__main__':
 	print get_curr_date_time(), ': delimiter :',delimiter
 	print get_curr_date_time(), ': file_format :',file_format
 	print get_curr_date_time(), ': truncate_before :',truncate_before
+	print get_curr_date_time(), ': accept_inv_chars :',accept_inv_chars
 	print get_curr_date_time(), ': py_job_name :',py_job_name
 	print get_curr_date_time(), ': logfile :',logfile
 	print get_curr_date_time(), ': errorfile :',errorfile
