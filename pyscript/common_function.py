@@ -1,7 +1,7 @@
 #!/usr/bin/python -tt
 ##########################################################################
 #
-#      PROGRAM: common_function.py
+#      PROGRAM: common_function_logging.py
 #      PURPOSE: Use this script to utilize common functions for all jobs
 #
 #                                  ****** NOTE ******
@@ -17,6 +17,7 @@
 #      ---------- -----------  ---------------------------------
 #      03/29/2017 Kunal Ghosh   Initial Code.
 #      07/31/2017 Kunal Ghosh   Added the send_email module.
+#      09/12/2017 Kunal Ghosh	Using the logging module.
 #
 ##########################################################################
 
@@ -29,6 +30,7 @@ import boto3
 import datetime
 from dateutil import tz
 import smtplib
+import logging
 
 #********************************************
 # Send sns notifications from any job
@@ -46,10 +48,12 @@ def send_sns_email(subject,message):
 	MessageStructure='json')
 	retcode=response["ResponseMetadata"]["HTTPStatusCode"]
 	if retcode != 200:
-		print "Error: unable to send email"
+		#print "Error: unable to send email"
+		logging.error("unable to send email")
 		sys.exit(1)
-	else:
-		print "Successfully sent email"
+#	else:
+#		print "Successfully sent email"
+#		logging.info("Successfully sent email")
 #send_sns_email(subject,message)
 
 #********************************************
@@ -80,13 +84,11 @@ Subject: %s
 """ % (sender,', '.join(receivers),subject,body)
 
 	try:
-	#	smtpObj = smtplib.SMTP('localhost')
-		smtpObj = smtplib.SMTP('email.fefinr.io')
-		smtpObj.sendmail(sender, receivers, message)
-		print "Successfully sent email"
+		server = smtplib.SMTP('email.fefinr.io')
+		server.sendmail(sender, receivers, message)
+#		logging.info("Successfully sent email")
 	except smtplib.SMTPException:
-		print "Error: unable to send email"
-	#	sys.exit(1)
+		logging.error("unable to send email")
 	finally:
-		smtpObj.quit()
+		server.quit()
 #send_email(sender,receivers,subject,body)

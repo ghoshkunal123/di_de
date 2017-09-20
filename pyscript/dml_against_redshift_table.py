@@ -16,6 +16,8 @@
 #         DATE      PGMR              DESCRIPTION
 #      ---------- -----------  ---------------------------------
 #      05/16/2017 Kunal Ghosh   Initial Code.
+#      09/20/2017 Kunal Ghosh	Including the logging module.
+#      09/20/2017 Kunal Ghosh	Added new function send_sns_email_alert.
 #
 ##########################################################################
 
@@ -50,6 +52,22 @@ def get_curr_date_time():
 
 
 #********************************************
+# Send job email
+#********************************************
+def send_sns_email_alert(email_subject,email_body):
+	msg={}
+	msg['default'] = email_body
+	msg_json=json.loads(json.dumps(msg))
+	logger.info('email_subject :{}'.format(email_subject))
+	logger.info('email_body :{}'.format(email_body))
+	logger.info('msg :{}'.format(msg))
+	logger.info('msg_json :{}'.format(msg_json))
+	try:
+		send_sns_email(email_subject,msg_json)
+	except:
+		logger.error('Failed sending the job start email.')
+		
+#********************************************
 # This is the main function
 #********************************************
 
@@ -58,7 +76,6 @@ if __name__ == '__main__':
 # Setting up all environment variables
 #********************************************
 	log_dir=common_config.log_dir
-	error_dir=common_config.error_dir
 	current_date=datetime.datetime.strftime(datetime.datetime.now(),'%Y%m%d%H%M%S')
 	if (os.path.dirname(sys.argv[0]) == '.'):
 		job_dir=os.getcwd()
@@ -74,7 +91,6 @@ if __name__ == '__main__':
 	sql_file_with_path=sys.argv[1]
 	py_job_name=py_job_name + '_' + '_'.join(os.path.basename(sql_file_with_path).split('.'))
 	logfile=py_job_name + '_' +  current_date + '.log'
-	errorfile=py_job_name + '_' + current_date + '.err'
 	data_dir=common_config.data_dir
 	trigger_dir=common_config.trigger_dir
 	increment_dir=common_config.increment_dir
@@ -91,44 +107,63 @@ if __name__ == '__main__':
 #********************************************
 # Start writing log and error
 #********************************************
-	sys.stdout = open(log_dir + logfile,'w')
-	sys.stderr = open(error_dir + errorfile,'w')
+#	sys.stdout = open(log_dir + logfile,'w')
+#	sys.stderr = open(error_dir + errorfile,'w')
+
+#********************************************
+# Setting up the logger
+#********************************************
+	logger = logging.getLogger(__name__)
+	logger.setLevel(logging.DEBUG)
+
+#********************************************
+# Setting up a file handler
+#********************************************
+	log_file_handle = logging.FileHandler(log_dir + logfile)
+	log_file_handle.setLevel(logging.DEBUG)
+
+#********************************************
+# Create formatter
+#********************************************
+	formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+#********************************************
+# Add formatter to handler
+#********************************************
+	log_file_handle.setFormatter(formatter)
+
+#********************************************
+# Add handler to logger
+#********************************************
+	logger.addHandler(log_file_handle)
+
 #********************************************
 # Send job start email
 #********************************************
 	email_subject = 'Started! ' + py_job_name
-	msg={}
 	email_body = py_job_name + ' job has been started at ' + current_date
-	msg['default'] = email_body
-	msg_json=json.loads(json.dumps(msg))
-	print get_curr_date_time(), ': email_subject :',email_subject
-	print get_curr_date_time(), ': email_body :',email_body
-	print get_curr_date_time(), ': msg :',msg
-	print get_curr_date_time(), ': msg_json :',msg_json
 	try:
-		send_sns_email(email_subject,msg_json)
+		send_sns_email_alert(email_subject,email_body)
 	except:
-		print get_curr_date_time(), ' Failed sending the job start email.'
+		logger.error('Failed sending the job start email.')
 
-	print get_curr_date_time(), ': log_dir :',log_dir
-	print get_curr_date_time(), ': error_dir :',error_dir
-	print get_curr_date_time(), ': current_date :',current_date
-	print get_curr_date_time(), ': job_dir :',job_dir
-	print get_curr_date_time(), ': sql_file_with_path :',sql_file_with_path
-	print get_curr_date_time(), ': py_job_name :',py_job_name
-	print get_curr_date_time(), ': logfile :',logfile
-	print get_curr_date_time(), ': errorfile :',errorfile
-	print get_curr_date_time(), ': data_dir :',data_dir
-	print get_curr_date_time(), ': trigger_dir :',trigger_dir
-	print get_curr_date_time(), ': increment_dir :',increment_dir
-	print get_curr_date_time(), ': bulk_dir :',bulk_dir
-	print get_curr_date_time(), ': project_dir :',project_dir
-	print get_curr_date_time(), ': script_dir :',script_dir
-	print get_curr_date_time(), ': pyscript_dir :',pyscript_dir
-	print get_curr_date_time(), ': sql_dir :',sql_dir
-	print get_curr_date_time(), ': redshift_dsn :',redshift_dsn
-	print get_curr_date_time(), ': redshift_user :',redshift_user
-	print get_curr_date_time(), ': redshift_database :',redshift_database
+	logger.info('log_dir :{}'.format(log_dir))
+	logger.info('current_date :{}'.format(current_date))
+	logger.info('job_dir :{}'.format(job_dir))
+	logger.info('sql_file_with_path :{}'.format(sql_file_with_path))
+	logger.info('py_job_name :{}'.format(py_job_name))
+	logger.info('logfile :{}'.format(logfile))
+	logger.info('data_dir :{}'.format(data_dir))
+	logger.info('trigger_dir :{}'.format(trigger_dir))
+	logger.info('increment_dir :{}'.format(increment_dir))
+	logger.info('bulk_dir :{}'.format(bulk_dir))
+	logger.info('project_dir :{}'.format(project_dir))
+	logger.info('script_dir :{}'.format(script_dir))
+	logger.info('pyscript_dir :{}'.format(pyscript_dir))
+	logger.info('sql_dir :{}'.format(sql_dir))
+	logger.info('redshift_dsn :{}'.format(redshift_dsn))
+	logger.info('redshift_user :{}'.format(redshift_user))
+	logger.info('redshift_database :{}'.format(redshift_database))
 
 #********************************************
 # Open the sql file to read content
@@ -138,50 +173,36 @@ if __name__ == '__main__':
 		line_count=sum(1 for line in sql_file)
 #		sql_file_content=sql_file.read()
 	except:
-		print get_curr_date_time(), ' Failed to open file or read contents of :' + sql_file_with_path
+		logger.error('Failed to open file or read contents of :{}'.format(sql_file_with_path))
 #********************************************
 # Send job failure email
 #********************************************
 		email_subject = 'Error! ' + py_job_name
-		msg={}
 		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' trying to open file or read contents of :' + sql_file_with_path
-		msg['default'] = email_body
-		msg_json=json.loads(json.dumps(msg))
-		print get_curr_date_time(), ': email_subject :',email_subject
-		print get_curr_date_time(), ': email_body :',email_body
-		print get_curr_date_time(), ': msg :',msg
-		print get_curr_date_time(), ': msg_json :',msg_json
 		try:
-			send_sns_email(email_subject,msg_json)
+			send_sns_email_alert(email_subject,email_body)
 		except:
-			print get_curr_date_time(), ' Failed sending the job failure email.'
+			logger.error('Failed sending the job failure email.')
 		sys.exit(2)
 
 #********************************************
 # Connecting to redshift
 #********************************************
-	print get_curr_date_time(), ': Starting to connect.'
+	logger.info('Starting to connect.')
 	cnx_string = 'DSN=%s;UID=%s;PWD=%s;DATABASE=%s;' % (redshift_dsn, redshift_user, redshift_password, redshift_database)
 	try:
 		cnx=pyodbc.connect(cnx_string)
 	except:
-		print get_curr_date_time(), ' Failed connecting to Redshift.'
+		logger.error('Failed connecting to Redshift.')
 #********************************************
 # Send job failure email
 #********************************************
 		email_subject = 'Error! ' + py_job_name
-		msg={}
 		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' trying to connect to Redshift.'
-		msg['default'] = email_body
-		msg_json=json.loads(json.dumps(msg))
-		print get_curr_date_time(), ': email_subject :',email_subject
-		print get_curr_date_time(), ': email_body :',email_body
-		print get_curr_date_time(), ': msg :',msg
-		print get_curr_date_time(), ': msg_json :',msg_json
 		try:
-			send_email(email_subject,msg_json)
+			send_sns_email_alert(email_subject,email_body)
 		except:
-			print get_curr_date_time(), ' Failed sending the job failure email.'
+			logger.error('Failed sending the job failure email.')
 		sys.exit(3)
 
 #********************************************
@@ -194,41 +215,27 @@ if __name__ == '__main__':
 			curr.execute(sql_file_content)
 			curr.execute('commit;')
 		except:
-			print get_curr_date_time(), ' Failed SQL against Redshift : ',sql_file_content
+			logger.error('Failed SQL against Redshift : {}'.format(sql_file_content))
 			email_subject = 'Error! ' + py_job_name
-			msg={}
 			email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' trying to run ' + sql_file_content + ' against Redshift.'
-			msg['default'] = email_body
-			msg_json=json.loads(json.dumps(msg))
-			print get_curr_date_time(), ': email_subject :',email_subject
-			print get_curr_date_time(), ': email_body :',email_body
-			print get_curr_date_time(), ': msg :',msg
-			print get_curr_date_time(), ': msg_json :',msg_json
 			try:
-				send_sns_email(email_subject,msg_json)
+				send_sns_email_alert(email_subject,email_body)
 			except:
-				print get_curr_date_time(), ' Failed sending the job failure email.'
+				logger.error('Failed sending the job failure email.')
 			sys.exit(4)
 		finally:
-			print get_curr_date_time(), ': Completed  running the SQL :' + sql_file_content + ' against Redshift.'
+			logger.info('Completed  running the SQL :{} against Redshift.'.format(sql_file_content))
 #********************************************
 # Close the connection
 #********************************************
 	cnx.close()
-	print get_curr_date_time(), ': Completed  running all the SQLs.'
+	logger.info('Completed  running all the SQLs.')
 #********************************************
 # Send job end email
 #********************************************
 	email_subject = 'Success! ' + py_job_name
-	msg={}
 	email_body = py_job_name + ' succeeded at ' + current_date
-	msg['default'] = email_body
-	msg_json=json.loads(json.dumps(msg))
-	print get_curr_date_time(), ': email_subject :',email_subject
-	print get_curr_date_time(), ': email_body :',email_body
-	print get_curr_date_time(), ': msg :',msg
-	print get_curr_date_time(), ': msg_json :',msg_json
 	try:
-		send_sns_email(email_subject,msg_json)
+		send_sns_email_alert(email_subject,email_body)
 	except:
-		print get_curr_date_time(), ' Failed sending the job success email.'
+		logger.error('Failed sending the job success email.')
