@@ -1,4 +1,4 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python3 -tt
 ##########################################################################
 #
 #      PROGRAM: dml_against_redshift_table.py
@@ -24,10 +24,7 @@
 #********************************************
 # All the import statements go here
 #********************************************
-# encoding=utf8
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 import os
 import sys
 import datetime
@@ -84,8 +81,8 @@ if __name__ == '__main__':
 	py_job_name=os.path.basename(sys.argv[0]).split('.')[0]
 
 	if len(sys.argv[1:]) == 0 or len(sys.argv[1:]) != 1:
-		print 'Usage Error: <py_job_name> <sql_file_with_path>'
-		print 'Example: ./dml_against_redshift_table.py /mnt/project/di_de/sql/redshift_prodcopy_ods_insert_account_plan_instrument.sql'
+		print('Usage Error: <py_job_name> <sql_file_with_path>')
+		print('Example: ./dml_against_redshift_table.py /mnt/project/di_de/sql/redshift_prodcopy_ods_insert_account_plan_instrument.sql')
 		sys.exit(1)
 
 	sql_file_with_path=sys.argv[1]

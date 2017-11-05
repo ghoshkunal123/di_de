@@ -1,4 +1,4 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python3 -tt
 ##########################################################################
 #
 #      PROGRAM: copy_to_redshift_table.py
@@ -20,16 +20,14 @@
 #      08/18/2017 Kunal Ghosh   Ask option to accept acceptinvchars
 #      09/20/2017 Kunal Ghosh	Including the logging module.
 #      09/20/2017 Kunal Ghosh	Added new function send_sns_email_alert.
+#      11/04/2017 Kunal Ghosh	Python3 compatible.
 #
 ##########################################################################
 
 #********************************************
 # All the import statements go here
 #********************************************
-# encoding=utf8
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 import os
 import sys
 import datetime
@@ -89,10 +87,10 @@ if __name__ == '__main__':
 	py_job_name=os.path.basename(sys.argv[0]).split('.')[0]
 
 	if len(sys.argv[1:]) == 0 or len(sys.argv[1:]) != 10:
-		print 'Usage Error: <py_job_name> <db_name> <schema_name> <table_name> <bucket_name> <bucket_prefix> <file_name> <delimiter> <file_format> <truncate_before y|n> <accept_inv_chars y|n>'
-		print 'Example: ./copy_to_redshift_table.py prodcopy stage account_plan_instrument fe-finr-da Dev/bulk/mssql/prodcopy/account_plan_instrument/ na \'|\' csv y y'
-		print 'OR'
-		print 'Example: ./copy_to_redshift_table.py prodcopy stage account_plan_instrument fe-finr-da Dev/bulk/mssql/prodcopy/account_plan_instrument/ account_plan_instrument.csv \'|\' csv y y'
+		print('Usage Error: <py_job_name> <db_name> <schema_name> <table_name> <bucket_name> <bucket_prefix> <file_name> <delimiter> <file_format> <truncate_before y|n> <accept_inv_chars y|n>')
+		print('Example: ./copy_to_redshift_table.py prodcopy stage account_plan_instrument fe-finr-da Dev/bulk/mssql/prodcopy/account_plan_instrument/ na \'|\' csv y y')
+		print('OR')
+		print('Example: ./copy_to_redshift_table.py prodcopy stage account_plan_instrument fe-finr-da Dev/bulk/mssql/prodcopy/account_plan_instrument/ account_plan_instrument.csv \'|\' csv y y')
 		sys.exit(1)
 
 	db_name=sys.argv[1].lower()

@@ -1,4 +1,4 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python3 -tt
 ##########################################################################
 #
 #      PROGRAM: common_config.py
@@ -17,6 +17,7 @@
 #      ---------- -----------  ---------------------------------
 #      03/29/2017 Kunal Ghosh   Initial Code.
 #      08/01/2017 Kunal Ghosh	Blank strings for connection details.
+#      11/04/2017 Kunal Ghosh   Python3 compatible.
 #
 ##########################################################################
 
@@ -40,17 +41,17 @@ project_dir='/'.join(os.getcwd().split('/')[:-1])
 script_dir=os.path.join(project_dir,'script','')
 pyscript_dir=os.path.join(project_dir,'pyscript','')
 sql_dir=os.path.join(project_dir,'sql','')
-mssql_dsn='Mssql_Prodcopy'
+mssql_dsn=''
 mssql_user=''
 mssql_password=''
 mssql_database=''
-redshift_dsn='Amazon_Redshift_x64'
+redshift_dsn=''
 redshift_user=''
 redshift_password=''
 redshift_database=''
 f_redshift_copy_credentials=lambda x: 'aws_iam_role=arn:aws:iam::224919220385:role/eRedshiftFinrAdmin' if(x == 'Dev') else ''
 redshift_copy_credentials=f_redshift_copy_credentials(env)
-netezza_dsn='NZPRDSQL'
+netezza_dsn=''
 netezza_user=''
 netezza_password=''
 netezza_database=''

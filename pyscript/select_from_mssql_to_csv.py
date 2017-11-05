@@ -1,4 +1,4 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python3 -tt
 ##########################################################################
 #
 #      PROGRAM: select_from_mssql_to_csv.py
@@ -18,16 +18,14 @@
 #      04/04/2017 Kunal Ghosh   Initial Code.
 #      09/13/2017 Kunal Ghosh	Including the logging module.
 #      09/16/2017 Kunal Ghosh	Added new function send_sns_email_alert.
+#      11/04/2017 Kunal Ghosh   Python3 compatible.
 #
 ##########################################################################
 
 #********************************************
 # All the import statements go here
 #********************************************
-# encoding=utf8
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 import os
 import sys
 import datetime
@@ -115,7 +113,7 @@ def run_each_sql(sql_line):
 		curr=cnx.cursor()
 		curr.execute(sql_line)
 #		count=curr.rowcount
-#		print get_curr_date_time(), ': Number of rows :',count
+#		print(get_curr_date_time(), ': Number of rows :',count)
 #********************************************
 # Changing the delimiter to pipe(|)
 #********************************************
@@ -168,8 +166,8 @@ if __name__ == '__main__':
 	py_job_name=os.path.basename(sys.argv[0]).split('.')[0]
 
 	if len(sys.argv[1:]) == 0 or len(sys.argv[1:]) != 4:
-		print 'Usage Error: <py_job_name> <table_name> <file_location> <sql_file_with_path> <one_split? y|n>'
-		print 'Example: ./select_from_mssql_to_csv.py account_plan_instrument /mnt/data/Dev/bulk/mssql/prodcopy/account_plan_instrument/ /mnt/project/di_de/sql/mssql_prodcopy_select_account_plan_instrument.sql y'
+		print('Usage Error: <py_job_name> <table_name> <file_location> <sql_file_with_path> <one_split? y|n>')
+		print('Example: ./select_from_mssql_to_csv.py account_plan_instrument /mnt/data/Dev/bulk/mssql/prodcopy/account_plan_instrument/ /mnt/project/di_de/sql/mssql_prodcopy_select_account_plan_instrument.sql y')
 		sys.exit(1)
 
 	table_name=sys.argv[1].lower()

@@ -1,4 +1,4 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python3 -tt
 ##########################################################################
 #
 #      PROGRAM: copy_from_ec2_to_s3.py
@@ -18,6 +18,7 @@
 #      05/03/2017 Kunal Ghosh   Initial Code.
 #      09/19/2017 Kunal Ghosh	Including the logging module.
 #      09/19/2017 Kunal Ghosh	Added new function send_sns_email_alert.
+#      11/04/2017 Kunal Ghosh	Python3 compatible.
 #
 ##########################################################################
 
@@ -80,8 +81,8 @@ if __name__ == '__main__':
 	py_job_name=os.path.basename(sys.argv[0]).split('.')[0]
 
 	if len(sys.argv[1:]) == 0 or len(sys.argv[1:]) != 3:
-		print 'Usage Error: <py_job_name> <bucket_name> <file_name_with_full_path> <bucket_prefix>'
-		print 'Example: ./copy_from_ec2_to_s3.py fe-finr-da /mnt/data/Dev/bulk/mssql/prodcopy/account_plan_instrument/account_plan_instrument.csv Dev/bulk/mssql/prodcopy/account_plan_instrument/'
+		print('Usage Error: <py_job_name> <bucket_name> <file_name_with_full_path> <bucket_prefix>')
+		print('Example: ./copy_from_ec2_to_s3.py fe-finr-da /mnt/data/Dev/bulk/mssql/prodcopy/account_plan_instrument/account_plan_instrument.csv Dev/bulk/mssql/prodcopy/account_plan_instrument/')
 		sys.exit(1)
 
 	bucket_name=sys.argv[1]

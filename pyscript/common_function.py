@@ -1,7 +1,7 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python3 -tt
 ##########################################################################
 #
-#      PROGRAM: common_function_logging.py
+#      PROGRAM: common_function.py
 #      PURPOSE: Use this script to utilize common functions for all jobs
 #
 #                                  ****** NOTE ******
@@ -18,6 +18,7 @@
 #      03/29/2017 Kunal Ghosh   Initial Code.
 #      07/31/2017 Kunal Ghosh   Added the send_email module.
 #      09/12/2017 Kunal Ghosh	Using the logging module.
+#      11/04/2017 Kunal Ghosh   Python3 compatible
 #
 ##########################################################################
 
