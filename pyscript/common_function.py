@@ -18,7 +18,9 @@
 #      03/29/2017 Kunal Ghosh   Initial Code.
 #      07/31/2017 Kunal Ghosh   Added the send_email module.
 #      09/12/2017 Kunal Ghosh	Using the logging module.
-#      11/04/2017 Kunal Ghosh   Python3 compatible
+#      11/04/2017 Kunal Ghosh   Python3 compatible.
+#      11/06/2017 Kunal Ghosh	Create directory tree.  	
+#      11/06/2017 Kunal Ghosh   Change permission of directory tree.	
 #
 ##########################################################################
 
@@ -32,6 +34,7 @@ import datetime
 from dateutil import tz
 import smtplib
 import logging
+import os
 
 #********************************************
 # Send sns notifications from any job
@@ -93,3 +96,21 @@ Subject: %s
 	finally:
 		server.quit()
 #send_email(sender,receivers,subject,body)
+
+#********************************************
+# Create directory tree
+#********************************************
+def create_dir_tree(dir_path):
+	os.makedirs(dir_path,exist_ok=True)
+
+#********************************************
+# Change directory tree permission
+#********************************************
+def change_dir_tree_perm(dir_path,perm):
+	os.chmod(dir_path,perm)
+	for r,d,f in os.walk(dir_path):
+		for di in d:
+			os.chmod(os.path.join(r,di),perm)
+		for fi in f:
+			os.chmod(os.path.join(r,fi),perm)
+

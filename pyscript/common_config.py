@@ -30,12 +30,13 @@ import os
 # Setting up common variable values
 #********************************************
 env='Dev'
-data_dir=os.path.join('/path/to/data',env)
+data_dir=os.path.join('/'.join(os.getcwd().split('/')[:-3]),'data',env)
+#data_dir=os.path.join('/home/kghosh/data',env)
 log_dir=os.path.join(data_dir,'log','')
 error_dir=os.path.join(data_dir,'error','')
 trigger_dir=os.path.join(data_dir,'trigger','')
-increment_dir='increment'
-bulk_dir='bulk'
+increment_dir=os.path.join(data_dir,'increment','')
+bulk_dir=os.path.join(data_dir,'bulk','')
 #project_dir='/mnt/project/di_de'
 project_dir='/'.join(os.getcwd().split('/')[:-1])
 script_dir=os.path.join(project_dir,'script','')

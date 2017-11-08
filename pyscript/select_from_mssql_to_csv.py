@@ -19,6 +19,9 @@
 #      09/13/2017 Kunal Ghosh	Including the logging module.
 #      09/16/2017 Kunal Ghosh	Added new function send_sns_email_alert.
 #      11/04/2017 Kunal Ghosh   Python3 compatible.
+#      11/06/2017 Kunal Ghosh	Create directory if not exists.
+#      11/07/2017 Kunal Ghosh   Change directory tree permission.
+#      11/07/2017 Kunal Ghosh   Call initial setup.
 #
 ##########################################################################
 
@@ -43,6 +46,7 @@ import logging
 import common_config
 import common_function
 from common_function import send_sns_email as send_sns_email
+from common_function import create_dir_tree,change_dir_tree_perm
 
 #********************************************
 # Get current date in proper format
@@ -77,7 +81,16 @@ def send_sns_email_alert(email_subject,email_body):
 	try:
 		send_sns_email(email_subject,msg_json)
 	except:
-		logger.error('Failed sending the job start email.')
+		logger.error('Failed sending {} email.'.format(email_subject))
+
+#********************************************
+# Initial Setup
+#********************************************
+def init_setup(some_dir):
+	if not os.path.exists(some_dir):
+		create_dir_tree(some_dir)
+		change_dir_tree_perm(some_dir,0o775)
+
 			
 #********************************************
 # The worker job or function to run each sql
@@ -190,6 +203,16 @@ if __name__ == '__main__':
 	mssql_database=common_config.mssql_database
 
 #********************************************
+# Setting up initial directories
+#********************************************
+	init_setup(data_dir)
+	init_setup(log_dir)
+	init_setup(trigger_dir)
+	init_setup(increment_dir)
+	init_setup(bulk_dir)
+	init_setup(extract_data_dir)
+
+#********************************************
 # Start writing log and error
 #********************************************
 #	sys.stdout = open(log_dir + logfile,'w')
@@ -221,6 +244,7 @@ if __name__ == '__main__':
 # Add handler to logger
 #********************************************
 	logger.addHandler(log_file_handle)
+
 
 #********************************************
 # Send job start email
@@ -273,21 +297,6 @@ if __name__ == '__main__':
 			logger.error('Failed sending the job failure email.')
 		sys.exit(2)
 
-#********************************************
-# Check if extract data directory exists
-#********************************************
-	if not os.path.exists(extract_data_dir):
-		logger.error('Cannot access :{}'.format(extract_data_dir))
-#********************************************
-# Send job failure email
-#********************************************
-		email_subject = 'Error! ' + py_job_name
-		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' cannot access :' + extract_data_dir
-		try:
-			send_sns_email_alert(email_subject,email_body)
-		except:
-			logger.error('Failed sending the job failure email.')
-		sys.exit(3)
 
 #********************************************
 # Parallely extract data from mssql table
