@@ -21,6 +21,7 @@
 #      09/20/2017 Kunal Ghosh	Including the logging module.
 #      09/20/2017 Kunal Ghosh	Added new function send_sns_email_alert.
 #      11/04/2017 Kunal Ghosh	Python3 compatible.
+#      11/08/2017 Kunal Ghosh	Call initial setup.
 #
 ##########################################################################
 
@@ -47,6 +48,7 @@ import subprocess
 import common_config
 import common_function
 from common_function import send_sns_email as send_sns_email
+from common_function import create_dir_tree,change_dir_tree_perm
 
 #********************************************
 # Get current date in proper format
@@ -68,7 +70,15 @@ def send_sns_email_alert(email_subject,email_body):
 	try:
 		send_sns_email(email_subject,msg_json)
 	except:
-		logger.error('Failed sending the job start email.')
+		logger.error('Failed sending {} email.'.format(email_subject))
+
+#********************************************
+# Initial Setup
+#********************************************
+def init_setup(some_dir):
+	if not os.path.exists(some_dir):
+		create_dir_tree(some_dir)
+		change_dir_tree_perm(some_dir,0o775)
 
 #********************************************
 # This is the main function
@@ -125,6 +135,16 @@ if __name__ == '__main__':
 		copy_sql='copy ' + db_name + '.' + schema_name + '.' + table_name + ' from \'' + s3_full_path + '\' credentials \'' + redshift_copy_credentials + '\' delimiter \'' + delimiter + '\' ' + file_format + ' acceptinvchars;'
 	else:
 		copy_sql='copy ' + db_name + '.' + schema_name + '.' + table_name + ' from \'' + s3_full_path + '\' credentials \'' + redshift_copy_credentials + '\' delimiter \'' + delimiter + '\' ' + file_format + ';'
+
+#********************************************
+# Setting up initial directories
+#********************************************
+	init_setup(data_dir)
+	init_setup(log_dir)
+	init_setup(trigger_dir)
+	init_setup(increment_dir)
+	init_setup(bulk_dir)
+
 
 #********************************************
 # Start writing log and error
