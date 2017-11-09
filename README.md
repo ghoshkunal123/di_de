@@ -23,3 +23,8 @@
 | select_from_mssql_to_csv.py | di_de/pyscript | from common_function import send_sns_email,create_dir_tree,change_dir_tree_perm | Extract any table from MSSQL to the specified directory in csv format with '\|' delimiter |
 | select_from_netezza_to_csv.py | di_de/pyscript |from common_function import send_sns_email,create_dir_tree,change_dir_tree_perm| Extract any table from Netezza to the specified directory in csv format with '\|' delimiter |
 | select_from_redshift_to_csv.py | di_de/pyscript | from common_function import send_sns_email,create_dir_tree,change_dir_tree_perm| Extract any table from Redshift to the specified directory in csv format with '\|' delimiter |
+
+```
+<py_job_name> <table_name> <file_location> <sql_file_with_path> <one_split? y|n>
+Example: ./select_from_mssql_to_csv.py table_name /path/to/data/ /path/to/sql/mssql_dbname_select_table_name.sql y
+```
