@@ -1,4 +1,4 @@
-# Copy to s3
+# [Copy to s3](https://confluence.fngn.com/display/DA/Copy+to+s3)
 After the [Extraction or Consumption](../master/Extraction_README.md) the next step is to copy the files over to s3. 
 Following section would demonstrate the process of moving the files to s3 bucket. 
 The highlight of this script is the ability to use the [multi-part upload utility](https://aws.amazon.com/blogs/aws/amazon-s3-multipart-upload/) to over come each part upload limitations of AWS. 
