@@ -24,7 +24,7 @@
 | common_function.py | di_de/pyscript | change_dir_tree_perm | Change the directory tree and its content permission |
 
 ## Building a data pipeline essentially involves 4 basic steps which are.
-1. [Extraction or Consumption](../di_de/Extraction_README.md)
+1. [Extraction or Consumption](../master/Extraction_README.md)
 2. Copy to s3
 3. Copy to Redshift stage
 4. Redshift DML operations
