@@ -28,5 +28,5 @@
 ## Building a data pipeline essentially involves 4 basic steps which are.
 1. [Extraction or Consumption](../master/Extraction_README.md)
 2. [Copy to s3](../master/CopyTos3_README.md)
-3. Copy to Redshift stage
+3. [Copy to Redshift stage](../master/CopyToRSStage_README.md)
 4. Redshift DML operations
