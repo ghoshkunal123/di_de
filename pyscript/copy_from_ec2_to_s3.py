@@ -20,6 +20,7 @@
 #      09/19/2017 Kunal Ghosh	Added new function send_sns_email_alert.
 #      11/04/2017 Kunal Ghosh	Python3 compatible.
 #      11/08/2017 Kunal Ghosh	Call initial setup.
+#      11/08/2017 Kunal Ghosh   Parallel Copy of multiple files.
 #
 ##########################################################################
 
@@ -34,6 +35,7 @@ import os
 import datetime
 import json
 import logging
+import multiprocessing
 
 
 #********************************************
@@ -74,6 +76,79 @@ def init_setup(some_dir):
 		create_dir_tree(some_dir)
 		change_dir_tree_perm(some_dir,0o775)
 
+#********************************************
+# Transfer file
+#********************************************
+def transfer_file_to_s3(f_name_with_full_path,bucket_name,bucket_file_name_with_full_path):
+#********************************************
+# Check if file is present to be copied to s3
+#********************************************
+	if not os.path.exists(f_name_with_full_path):
+		logger.error('Failed to find the file :{}'.format(f_name_with_full_path))
+#********************************************
+# Send job failure email
+#********************************************
+		email_subject = 'Error! ' + py_job_name
+		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' finding the file :' + f_name_with_full_path
+		try:
+			send_sns_email_alert(email_subject,email_body)
+		except:
+			logger.error('Failed sending the job failure email.')
+		sys.exit(2)
+
+#********************************************
+# Check for bucket existance
+#********************************************
+	s3_resource=boto3.resource('s3')
+	if s3_resource.Bucket(bucket_name) not in s3_resource.buckets.all():
+		logger.error('Failed to find the bucket :{}'.format(bucket_name))
+#********************************************
+# Send job failure email
+#********************************************
+		email_subject = 'Error! ' + py_job_name
+		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' finding the bucket :' + bucket_name
+		try:
+			send_sns_email_alert(email_subject,email_body)
+		except:
+			logger.error('Failed sending the job failure email.')
+		sys.exit(3)
+
+#********************************************
+# Delete if file exists in bucket
+#********************************************
+	s3_object = s3_resource.Object(bucket_name,bucket_file_name_with_full_path)
+	try:
+		bucket_file_content_type = s3_object.content_type
+		logger.info('File exists in s3 bucket and the content type is, {}'.format(bucket_file_content_type))
+		logger.info('Deleting the file : {}{}'.format(bucket_file_name_with_full_path))
+		s3_object.delete()
+	except botocore.exceptions.ClientError as e:
+		logger.error('{}: {}'.format(e.response['Error']['Code'],e.response['Error']['Message']))
+		logger.error('File does not exist in s3 bucket and hence transferring the file :{}'.format(bucket_file_name_with_full_path))
+
+#********************************************
+# Transfer the file to s3 bucket
+#********************************************
+	s3_client = boto3.client('s3',s3_region)
+	transfer = boto3.s3.transfer.S3Transfer(s3_client)
+	try:
+		transfer.upload_file(f_name_with_full_path,bucket_name,bucket_file_name_with_full_path,extra_args=s3_extra_args)
+		logger.info('Completed s3 transfer for the file :{} to s3://{}{}'.format(f_name_with_full_path,bucket_name,bucket_file_name_with_full_path))
+	except botocore.exceptions.ClientError as e:
+		logger.error('{}: {}'.format(e.response['Error']['Code'],e.response['Error']['Message']))
+		logger.error('Failed s3 transfer for the file :{} to s3://{}{}'.format(f_name_with_full_path,bucket_name,bucket_file_name_with_full_path))
+#********************************************
+# Send job failure email
+#********************************************
+		email_subject = 'Error! ' + py_job_name
+		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' s3 transfer for the file :' + f_name_with_full_path
+		try:
+			send_sns_email_alert(email_subject,email_body)
+		except:
+			logger.error('Failed sending the job failure email.')
+		sys.exit(4)
+
+
 
 #********************************************
 # This is the main function
@@ -94,6 +169,9 @@ if __name__ == '__main__':
 	if len(sys.argv[1:]) == 0 or len(sys.argv[1:]) != 3:
 		print('Usage Error: <py_job_name> <bucket_name> <file_name_with_full_path> <bucket_prefix>')
 		print('Example: ./copy_from_ec2_to_s3.py fe-finr-da /mnt/data/Dev/bulk/mssql/prodcopy/account_plan_instrument/account_plan_instrument.csv Dev/bulk/mssql/prodcopy/account_plan_instrument/')
+		print('OR')
+		print('Usage Error: <py_job_name> <bucket_name> <dir_name_with_full_path> <bucket_prefix>')
+		print('Example: ./copy_from_ec2_to_s3.py fe-finr-da /mnt/data/Dev/bulk/mssql/prodcopy/account_plan_instrument Dev/bulk/mssql/prodcopy/account_plan_instrument/')
 		sys.exit(1)
 
 	bucket_name=sys.argv[1]
@@ -179,76 +257,47 @@ if __name__ == '__main__':
 	logger.info('s3_extra_args :{}'.format(s3_extra_args))
 
 #********************************************
-# Check if file is present to be copied to s3
+# Check if file or dir
 #********************************************
-	if not os.path.exists(file_name_with_full_path):
-		logger.error('Failed to find the file :{}'.format(file_name_with_full_path))
-#********************************************
-# Send job failure email
-#********************************************
-		email_subject = 'Error! ' + py_job_name
-		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' finding the file :' + file_name_with_full_path
-		try:
-			send_sns_email_alert(email_subject,email_body)
-		except:
-			logger.error('Failed sending the job failure email.')
-		sys.exit(2)
-	else:
-		bucket_file_name = os.path.basename(file_name_with_full_path)
+	if os.path.isfile(file_name_with_full_path):
+		bucket_file_name=os.path.basename(file_name_with_full_path)
 		logger.info('bucket_file_name :{}'.format(bucket_file_name))
+		bucket_file_name_with_full_path=os.path.join(bucket_prefix,bucket_file_name)
+		logger.info('bucket_file_name_with_full_path :{}'.format(bucket_file_name_with_full_path))
+		transfer_file_to_s3(file_name_with_full_path,bucket_name,bucket_file_name_with_full_path)
+	jobs=[]
+	if os.path.isdir(file_name_with_full_path):
+		for r,d,f in os.walk(file_name_with_full_path):
+			for fi in f:
+				local_file_name_with_full_path=os.path.join(r,fi)
+				logger.info('local_file_name_with_full_path :{}'.format(local_file_name_with_full_path))
+				pname=os.path.basename(local_file_name_with_full_path)
+				logger.info('Starting :{}'.format(pname))
+				bucket_file_name_with_full_path=local_file_name_with_full_path.replace(file_name_with_full_path,os.path.normpath(bucket_prefix))
+				logger.info('bucket_file_name_with_full_path :{}'.format(bucket_file_name_with_full_path))
+				j=multiprocessing.Process(name=pname,target=transfer_file_to_s3,args=(local_file_name_with_full_path,bucket_name,bucket_file_name_with_full_path,))
+				jobs.append(j)
+				j.start()
 
-#********************************************
-# Check for bucket existance
-#********************************************
-	s3_resource=boto3.resource('s3')
-	if s3_resource.Bucket(bucket_name) not in s3_resource.buckets.all():
-		logger.error('Failed to find the bucket :{}'.format(bucket_name))
+		for job in jobs:
+			job.join()
+			job_name=job.name
+			job_exitcode=job.exitcode
+			if job_exitcode > 0:
+				logger.info('{} was terminated by signal: {}'.format(job_name,job_exitcode))
 #********************************************
 # Send job failure email
 #********************************************
-		email_subject = 'Error! ' + py_job_name
-		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' finding the bucket :' + bucket_name
-		try:
-			send_sns_email_alert(email_subject,email_body)
-		except:
-			logger.error('Failed sending the job failure email.')
-		sys.exit(3)
+				email_subject = 'Error! ' + job_name
+				email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' trying to run: ' + job_name
+				try:
+					send_sns_email_alert(email_subject,email_body)
+				except:
+					logger.error('Failed sending the job failure email.')
+				sys.exit(6)
+			else:
+				logger.info('{} returned: {}'.format(job_name,job_exitcode))
 
-#********************************************
-# Delete if file exists in bucket
-#********************************************
-	s3_object = s3_resource.Object(bucket_name,bucket_prefix + bucket_file_name)
-	try:
-		bucket_file_content_type = s3_object.content_type
-		logger.info('File exists in s3 bucket and the content type is, {}'.format(bucket_file_content_type))
-		logger.info('Deleting the file : {}{}'.format(bucket_prefix,bucket_file_name))
-		s3_object.delete()
-	except botocore.exceptions.ClientError as e:
-		logger.error('{}: {}'.format(e.response['Error']['Code'],e.response['Error']['Message']))
-		logger.error('File does not exist in s3 bucket and hence transferring the file :{}{}'.format(bucket_prefix,bucket_file_name))
-
-#********************************************
-# Transfer the file to s3 bucket
-#********************************************
-	s3_client = boto3.client('s3',s3_region)
-	transfer = boto3.s3.transfer.S3Transfer(s3_client)
-	try:
-		transfer.upload_file(file_name_with_full_path,bucket_name,bucket_prefix + bucket_file_name,extra_args=s3_extra_args)
-		logger.info('Completed s3 transfer for the file :{} to s3://{}{}{}'.format(file_name_with_full_path,bucket_name,bucket_prefix,bucket_file_name))
-	except botocore.exceptions.ClientError as e:
-		logger.error('{}: {}'.format(e.response['Error']['Code'],e.response['Error']['Message']))
-		logger.error('Failed s3 transfer for the file :{} to s3://{}{}{}'.format(file_name_with_full_path,bucket_name,bucket_prefix,bucket_file_name))
-#********************************************
-# Send job failure email
-#********************************************
-		email_subject = 'Error! ' + py_job_name
-		email_body = py_job_name + ' job has failed at ' + get_curr_date_time() + ' s3 transfer for the file :' + file_name_with_full_path
-		try:
-			send_sns_email_alert(email_subject,email_body)
-		except:
-			logger.error('Failed sending the job failure email.')
-		sys.exit(4)
-			
 #********************************************
 # Send job end email
 #********************************************
