@@ -9,3 +9,8 @@
 | Script Name | Script Location | Sub Module | Purpose |
 | ------------|-----------------|------------|---------|
 | common_config.py|di_de/pyscript||Generic script to set environment for data, script, sql, trigger, aws region, encryption method, DSN for databases and others|
+| common_function.py | di_de/pyscript | send_sns_email | Send email alerts to end points subscribed in AWS SNS service |
+| common_function.py | di_de/pyscript | local_to_utc | Convert local time to utc time |
+| common_function.py | di_de/pyscript | send_email | Send email using the corporate email server |
+| common_function.py | di_de/pyscript | create_dir_tree | Create a directory tree just mkdir -p in unix |
+| common_function.py | di_de/pyscript | change_dir_tree_perm | Change the directory tree and its content permission |
