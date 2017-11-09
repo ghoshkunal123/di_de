@@ -6,7 +6,7 @@
 4. Redshift DML operations
 
 ## Get Started
-###[Clone project](https://github.com/ghoshkunal123/di_de)
+### [Clone project](https://github.com/ghoshkunal123/di_de)
 ### Update the di_de/pyscript/common_config.py file with DB connection and data_dir
 
 ### [Common configurations and functions](https://confluence.fngn.com/display/DA/Common+configurations+and+functions)
