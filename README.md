@@ -9,6 +9,15 @@
 ### [Clone project](https://github.com/ghoshkunal123/di_de)
 ### Update the di_de/pyscript/common_config.py file with DB connection and data_dir
 
+### Setup Assumptions
+| Assumptions | How To |
+|-------------|--------|
+|Execution in UNIX environment||
+|ODBC Setup for MSSQL,Netezza, Redshift| [Comming Soon] |
+|Necessary IAM role setup for S3 and Redshift operations||
+|DB Access||
+
+
 ### [Common configurations and functions](https://confluence.fngn.com/display/DA/Common+configurations+and+functions)
 | Script Name | Script Location | Sub Module | Purpose |
 | ------------|-----------------|------------|---------|
