@@ -4,3 +4,5 @@
 2. Copy to s3
 3. Copy to Redshift stage
 4. Redshift DML operations
+
+### Common configurations and functions
