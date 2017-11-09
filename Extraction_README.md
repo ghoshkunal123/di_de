@@ -1,4 +1,6 @@
 # [Extraction or Consumption](https://confluence.fngn.com/display/DA/Extraction+or+Consumption)
+The first step would be extract or consume data from sources. Following is a demonstration for extraction from data bases from different DB technologies like MSSQL, Redshift and Netezza. The extraction logic would be SQL. Profiling the data would give a good idea on which key / keys the data distribution would be even for parallel extraction. The trick for big table extraction is to achieve an evenly distributed parallel extract or select process to save it into files.
+
 | Script Name | Script Location | Sub Module | Purpose |
 | ------------|-----------------|------------|---------|
 | select_from_mssql_to_csv.py | di_de/pyscript | from common_function import send_sns_email,create_dir_tree,change_dir_tree_perm | Extract any table from MSSQL to the specified directory in csv format with '\|' delimiter |
