@@ -6,3 +6,6 @@
 4. Redshift DML operations
 
 ### Common configurations and functions
+| Script Name | Script Location | Sub Module | Purpose |
+| ------------|-----------------|------------|---------|
+| common_config.py|di_de/pyscript||Generic script to set environment for data, script, sql, trigger, aws region, encryption method, DSN for databases and others|
