@@ -3,9 +3,9 @@ The first step would be extract or consume data from sources. Following is a dem
 
 | Script Name | Script Location | Sub Module | Purpose |
 | ------------|-----------------|------------|---------|
-| select_from_mssql_to_csv.py | di_de/pyscript | from common_function import send_sns_email,create_dir_tree,change_dir_tree_perm | Extract any table from MSSQL to the specified directory in csv format with '\|' delimiter |
-| select_from_netezza_to_csv.py | di_de/pyscript |from common_function import send_sns_email,create_dir_tree,change_dir_tree_perm| Extract any table from Netezza to the specified directory in csv format with '\|' delimiter |
-| select_from_redshift_to_csv.py | di_de/pyscript | from common_function import send_sns_email,create_dir_tree,change_dir_tree_perm| Extract any table from Redshift to the specified directory in csv format with '\|' delimiter |
+| select_from_mssql_to_csv.py | di_de/pyscript | from common_function import send_sns_email,create_dir_tree,change_dir_tree_perm | Extract any table from MSSQL to the specified directory in csv format with pipe delimiter |
+| select_from_netezza_to_csv.py | di_de/pyscript |from common_function import send_sns_email,create_dir_tree,change_dir_tree_perm| Extract any table from Netezza to the specified directory in csv format with pipe delimiter |
+| select_from_redshift_to_csv.py | di_de/pyscript | from common_function import send_sns_email,create_dir_tree,change_dir_tree_perm| Extract any table from Redshift to the specified directory in csv format with pipe delimiter |
 
 ## Extraction Script Usage for MSSQL
 ```
