@@ -12,7 +12,7 @@
 |Necessary IAM role setup for S3 and Redshift operations||
 |DB Access||
 |Python3||
-|Python3 libraries sys,os,datetime,logging,pyodbc,csv,multiprocessing,json,logging,boto3,botocore,subprocess|sudo apt install python3-pip\; sudo -H pip3 install **library**|
+|Python3 libraries sys,os,datetime,logging,pyodbc,csv,multiprocessing,json,logging,boto3,botocore,subprocess|sudo apt install python3-pip & sudo -H pip3 install **library**|
 |Encrypted s3 bucket with AES256 bit encryption|[Comming Soon]|
 
 ### [Common configurations and functions](https://confluence.fngn.com/display/DA/Common+configurations+and+functions)
