@@ -1,4 +1,4 @@
-# [Copy to Redshift stage](https://confluence.fngn.com/display/DA/Copy+to+Redshift+stage)
+# [Redshift DML operations](https://confluence.fngn.com/display/DA/Redshift+DML+operations)
 After the [Copy to Redshift stage](../master/CopyToRSStage_README.md),this step will transform or load the data to target schema by the use of SQL statements. 
 Following section would demonstrate the process of firing DML statements from a SQL file against Redshift table in order to full fill  the transform and load process. 
 The script will execute the provided SQLs sequentially in a SQL file in the mentioned location.
