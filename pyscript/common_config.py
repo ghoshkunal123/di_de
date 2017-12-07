@@ -19,6 +19,7 @@
 #      08/01/2017 Kunal Ghosh	Blank strings for connection details.
 #      11/04/2017 Kunal Ghosh   Python3 compatible.
 #      12/06/2017 Kunal Ghosh   Windows platform Compatible.
+#      12/07/2017 Kunal Ghosh   Removed extra info.
 #
 ##########################################################################
 
@@ -26,7 +27,7 @@
 # All the import statements go here
 #********************************************
 import os
- 
+
 #********************************************
 # Setting up common variable values
 #********************************************
@@ -46,19 +47,19 @@ project_dir=os.sep.join(re.split('/|\\\\+',os.getcwd())[:-1])
 script_dir=os.path.join(project_dir,'script','')
 pyscript_dir=os.path.join(project_dir,'pyscript','')
 sql_dir=os.path.join(project_dir,'sql','')
-mssql_dsn='Mssql_Prodcopy'
-mssql_user='hdpuser'
-mssql_password='bigdata'
-mssql_database='prodcopy'
-redshift_dsn='Amazon_Redshift_x64'
-redshift_user='admin'
-redshift_password='DevAdmin1'
-redshift_database='prodcopy'
+mssql_dsn=''
+mssql_user=''
+mssql_password=''
+mssql_database=''
+redshift_dsn=''
+redshift_user=''
+redshift_password=''
+redshift_database=''
 f_redshift_copy_credentials=lambda x: 'aws_iam_role=arn:aws:iam::224919220385:role/eRedshiftFinrAdmin' if(x == 'Dev') else ''
 redshift_copy_credentials=f_redshift_copy_credentials(env)
-netezza_dsn='NZPRDSQL'
-netezza_user='kghosh'
-netezza_password='Atrayee_07'
-netezza_database='ANALYTICS'
+netezza_dsn=''
+netezza_user=''
+netezza_password=''
+netezza_database=''
 s3_region='us-west-1'
 s3_extra_args={'ServerSideEncryption': "AES256"}
